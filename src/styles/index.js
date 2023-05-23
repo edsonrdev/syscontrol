@@ -93,6 +93,15 @@ export const GlobalStyles = createGlobalStyle`
             background: var(--gray-1);
 
         }
+
+        span.error {
+            color: var(--red-4);
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.4px;
+
+            margin-top: 4px;
+        }
     }
 
     hr {

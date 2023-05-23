@@ -1,5 +1,5 @@
 import { useEffect, useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { toast } from "react-toastify";
 
@@ -7,7 +7,6 @@ import { Container } from "./styles";
 
 import { Header } from "../../components/Header";
 
-import { BiSearch } from "react-icons/bi";
 import { RiEdit2Fill } from "react-icons/ri";
 import { HiEye } from "react-icons/hi";
 import { Button } from "../../components/Button";
@@ -22,12 +21,16 @@ import * as yup from "yup";
 import { api } from "../../services";
 
 export const Clientes = () => {
+  const history = useHistory();
+
   const [clientes, setClientes] = useState([]);
   const [pesquisa, setPesquisa] = useState("");
 
   const clientesPesquisados = clientes.filter((client) =>
     client.name.toLowerCase().includes(pesquisa.toLowerCase())
   );
+
+  console.log(clientesPesquisados);
 
   const {
     showModal,
@@ -36,6 +39,7 @@ export const Clientes = () => {
     setTypeModal,
     entityModal,
     setEntityModal,
+    // setModal,
     resetModal,
   } = useContext(ModalContext);
 
@@ -65,18 +69,13 @@ export const Clientes = () => {
 
   useEffect(() => {
     getClientes();
-  }, [clientes]);
+  }, []);
 
   useEffect(() => {
     if (formState.isSubmitSuccessful) {
       reset({ name: "", phone: "", address: "" });
     }
   }, [formState, reset]);
-
-  // useEffect(() => {
-
-  //   setPesquisados(clientesPesquisados);
-  // }, [pesquisa]);
 
   const submitCallback = async (data) => {
     if (typeModal === "cadastrarCliente") {
@@ -90,31 +89,26 @@ export const Clientes = () => {
 
     if (typeModal === "editarCliente") {
       console.log("editar cliente mané");
-      // try {
-      //   await api.post("/clients", data);
-      //   toast.success("Cliente cadastrado com sucesso!");
-      // } catch (err) {
-      //   toast.error(err.response.data.message);
-      // }
     }
 
-    resetModal(false);
+    setTypeModal("");
+    setEntityModal({});
+    setShowModal(false);
   };
 
-  const handleCadastrarCliente = () => {
-    resetModal("");
-    setTypeModal("cadastrarCliente");
-    setShowModal(true);
+  const handleCliente = (cliente) => {
+    if (!(typeof cliente === "object" && cliente !== null)) {
+      // console.log("cadastrar");
+      setEntityModal({});
+      setTypeModal("cadastrarCliente");
+      setShowModal(true);
+    } else if (typeof cliente === "object" && cliente !== null) {
+      // console.log("editar");
+      setEntityModal({ cliente });
+      setTypeModal("editarCliente");
+      setShowModal(true);
+    }
   };
-
-  const handleEditarCliente = (cliente) => {
-    resetModal("");
-    setTypeModal("editarCliente");
-    setShowModal(true);
-    setEntityModal(cliente);
-  };
-
-  console.log(pesquisa);
 
   return (
     <Container>
@@ -133,7 +127,7 @@ export const Clientes = () => {
               />
             </div>
 
-            <Button variant="primary" onClick={handleCadastrarCliente}>
+            <Button variant="primary" onClick={() => handleCliente()}>
               Cadastrar cliente
             </Button>
           </div>
@@ -164,7 +158,7 @@ export const Clientes = () => {
               ""
             )}
 
-            {clientes.length ? (
+            {clientes.length !== 0 && clientesPesquisados.length === 0 ? (
               clientes.map((cliente) => (
                 <li key={cliente.id}>
                   <span className="client-name">{cliente.name}</span>
@@ -181,7 +175,9 @@ export const Clientes = () => {
                       size={17}
                       className="edit-client"
                       data-tooltip-content="Editar cliente"
-                      onClick={() => handleEditarCliente(cliente)}
+                      onClick={() =>
+                        history.push(`/cliente/editar/${cliente.id}`)
+                      }
                     />
                   </div>
                 </li>
@@ -193,7 +189,7 @@ export const Clientes = () => {
         </div>
       </main>
 
-      {showModal && typeModal === "cadastrarCliente" && (
+      {showModal && (
         <Modal title="Cadastrar Cliente">
           <form onSubmit={handleSubmit(submitCallback)}>
             <div className="form-group">
@@ -204,7 +200,7 @@ export const Clientes = () => {
                 placeholder="Edson Rodrigues"
                 {...register("name")}
               />
-              {errors.name?.message}
+              <span className="error">{errors.name?.message}</span>
             </div>
 
             <div className="form-group">
@@ -225,54 +221,7 @@ export const Clientes = () => {
                 placeholder="Floresta-PE"
                 {...register("address")}
               />
-              {errors.address?.message}
-            </div>
-
-            <div className="form-group">
-              <Button type="submit" variant="primary">
-                Cadastrar
-              </Button>
-            </div>
-          </form>
-        </Modal>
-      )}
-
-      {showModal && typeModal === "editarCliente" && (
-        <Modal title="Editar Cliente">
-          <form onSubmit={handleSubmit(submitCallback)}>
-            <div className="form-group">
-              <label htmlFor="name">Nome:</label>
-              <input
-                type="text"
-                id="name"
-                placeholder="Edson Rodrigues"
-                {...register("name")}
-                defaultValue={entityModal?.name}
-              />
-              {errors.name?.message}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="phone">Telefone:</label>
-              <input
-                type="tel"
-                id="phone"
-                placeholder="87996467409"
-                {...register("phone")}
-                defaultValue={entityModal?.phone}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="address">Endereço:</label>
-              <input
-                type="text"
-                id="address"
-                placeholder="Floresta-PE"
-                {...register("address")}
-                defaultValue={entityModal?.address}
-              />
-              {errors.address?.message}
+              <span className="error">{errors.address?.message}</span>
             </div>
 
             <div className="form-group">

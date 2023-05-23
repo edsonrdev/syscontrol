@@ -5,7 +5,7 @@ import { Container, Content } from "./styles";
 import { IoClose } from "react-icons/io5";
 
 export const Modal = ({ title, children }) => {
-  const { setShowModal } = useContext(ModalContext);
+  const { resetModal } = useContext(ModalContext);
 
   return (
     <Container>
@@ -13,7 +13,7 @@ export const Modal = ({ title, children }) => {
         <header className="modal-title">
           <h2>{title}</h2>
           <span>
-            <IoClose size={20} onClick={() => setShowModal(false)} />
+            <IoClose size={20} onClick={resetModal} />
           </span>
         </header>
 
