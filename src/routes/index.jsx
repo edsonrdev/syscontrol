@@ -5,7 +5,6 @@ import { SignUp } from "../pages/SignUp";
 import { Painel } from "../pages/Painel";
 import { Clientes } from "../pages/Clientes";
 import { Cliente } from "../pages/Cliente";
-import { CadastrarCliente } from "../pages/CadastrarCliente";
 import { EditarCliente } from "../pages/EditarCliente";
 
 export const Routes = () => (
@@ -14,9 +13,8 @@ export const Routes = () => (
     <Route path="/entrar" component={SignIn} />
     <Route path="/cadastrar" component={SignUp} />
     <Route path="/painel" component={Painel} />
-    <Route path="/cliente/:id/editar" component={EditarCliente} />
-    <Route path="/cliente/:id" component={Cliente} />
-    <Route path="/cliente/cadastrar" component={CadastrarCliente} />
     <Route path="/clientes" component={Clientes} />
+    <Route path="/cliente/editar/:id" component={EditarCliente} />
+    <Route path="/cliente/:id" component={Cliente} />
   </Switch>
 );

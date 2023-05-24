@@ -104,22 +104,6 @@ export const Container = styled.div`
 
     input {
       background: var(--white);
-
-      &::placeholder {
-        /* Chrome, Firefox, Opera, Safari 10.1+ */
-        color: var(--gray-3);
-        opacity: 1;
-      }
-
-      &:-ms-input-placeholder {
-        /* Internet Explorer 10-11 */
-        color: var(--gray-3);
-      }
-
-      &::-ms-input-placeholder {
-        /* Microsoft Edge */
-        color: var(--gray-3);
-      }
     }
 
     /* span.error {

@@ -57,13 +57,16 @@ export const Container = styled.div`
       }
 
       .options {
-        display: flex;
-        align-items: center;
+        display: inline-flex;
+        align-items: stretch;
         gap: 16px;
+        padding: 5px 0 0 0;
 
         color: var(--gray-2);
 
         svg {
+          width: 20px;
+          height: 18px;
           cursor: pointer;
 
           &.view-details {

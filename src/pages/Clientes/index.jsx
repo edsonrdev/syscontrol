@@ -124,6 +124,7 @@ export const Clientes = () => {
                 placeholder="Buscar cliente pelo nome..."
                 value={pesquisa}
                 onChange={(e) => setPesquisa(e.target.value)}
+                disabled={!clientes.length}
               />
             </div>
 
@@ -158,46 +159,45 @@ export const Clientes = () => {
               ""
             )} */}
 
-            {clientesPesquisados.length && pesquisa ? (
-              clientesPesquisados.map((cliente) => (
+            {!clientes.length ? (
+              <p>Sem clientes cadastrados.</p>
+            ) : clientes.length && !pesquisa ? (
+              clientes.map((cliente) => (
                 <li key={cliente.id}>
                   <span className="client-name">{cliente.name}</span>
                   <div className="options">
-                    {/* <Link to={`/cliente/${cliente.id}`}> */}
-                    <Link to={"/"}>
-                      <HiEye
-                        size={17}
-                        className="view-details"
-                        data-tooltip-content="Ver detalhes"
-                      />
-                    </Link>
-                    |
+                    <HiEye
+                      className="view-details"
+                      data-tooltip-content="Ver detalhes"
+                      onClick={() => history.push(`/cliente/${cliente.id}`)}
+                    />
+
+                    <span className="divider">|</span>
+
                     <RiEdit2Fill
-                      size={17}
                       className="edit-client"
                       data-tooltip-content="Editar cliente"
                       onClick={() =>
-                        history.push(`/cliente/${cliente.id}/editar`)
+                        history.push(`/cliente/editar/${cliente.id}`)
                       }
                     />
                   </div>
                 </li>
               ))
-            ) : !pesquisa ? (
-              clientes.map((cliente) => (
+            ) : clientesPesquisados.length && pesquisa ? (
+              clientesPesquisados.map((cliente) => (
                 <li key={cliente.id}>
                   <span className="client-name">{cliente.name}</span>
                   <div className="options">
-                    <Link to={`/cliente/${cliente.id}`}>
-                      <HiEye
-                        size={17}
-                        className="view-details"
-                        data-tooltip-content="Ver detalhes"
-                      />
-                    </Link>
-                    |
+                    <HiEye
+                      className="view-details"
+                      data-tooltip-content="Ver detalhes"
+                      onClick={() => history.push(`/cliente/${cliente.id}`)}
+                    />
+
+                    <span className="divider">|</span>
+
                     <RiEdit2Fill
-                      size={17}
                       className="edit-client"
                       data-tooltip-content="Editar cliente"
                       onClick={() =>

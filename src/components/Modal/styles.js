@@ -19,7 +19,10 @@ export const Container = styled.div`
 `;
 
 export const Content = styled.div`
-  min-width: 320px;
+  /* min-width: 320px; */
+
+  min-width: ${({ width }) =>
+    width === "md" ? "420px" : width === "lg" ? "520px" : "320px"};
 
   background: var(--white);
 

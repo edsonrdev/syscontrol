@@ -1,7 +1,6 @@
 import { styled } from "styled-components";
 
 export const Container = styled.button`
-  /* min-width: 100px; */
   cursor: pointer;
   box-shadow: 0 2px 6px 2px rgba(0, 0, 0, 0.07);
   transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
@@ -13,6 +12,15 @@ export const Container = styled.button`
   align-items: center;
   justify-content: center;
   gap: 6px;
+
+  font-size: ${({ size }) =>
+    size === "sm"
+      ? "13px"
+      : size === "md"
+      ? "15px"
+      : size === "lg"
+      ? "18px"
+      : "15px"};
 
   height: ${({ size }) =>
     size === "sm"
@@ -61,7 +69,7 @@ export const Container = styled.button`
 
   border: 2px solid transparent;
   border-radius: 3px;
-  font-size: 15px;
+
   font-weight: 500;
 
   border-color: ${({ variant }) =>

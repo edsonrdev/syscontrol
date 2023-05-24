@@ -4,12 +4,12 @@ import { ModalContext } from "../../providers/modal";
 import { Container, Content } from "./styles";
 import { IoClose } from "react-icons/io5";
 
-export const Modal = ({ title, children }) => {
+export const Modal = ({ title, children, ...rest }) => {
   const { resetModal } = useContext(ModalContext);
 
   return (
     <Container>
-      <Content>
+      <Content {...rest}>
         <header className="modal-title">
           <h2>{title}</h2>
           <span>

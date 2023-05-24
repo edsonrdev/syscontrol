@@ -43,6 +43,23 @@ export const GlobalStyles = createGlobalStyle`
         
     }
 
+    html {
+        ::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: var(--gray-1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            border-radius: 16px;
+            background-color: var(--brand-2);
+            border: 3px solid transparent;
+            background-clip: content-box;
+        }
+    }
+
     body {
         min-height: 100vh;
 
@@ -72,6 +89,15 @@ export const GlobalStyles = createGlobalStyle`
         /* margin-bottom: 20px; */
     }
 
+    .row {
+        display: flex;
+        gap: 12px;
+
+        > .form-group {
+            flex-basis: calc((100% - 12px) / 2);
+        }
+    }
+
     .form-group {
         display: flex;
         flex-direction: column;
@@ -92,6 +118,23 @@ export const GlobalStyles = createGlobalStyle`
             text-decoration: none;
             background: var(--gray-1);
 
+            font-size: 14px;
+
+            &::placeholder {
+                /* Chrome, Firefox, Opera, Safari 10.1+ */
+                color: var(--gray-3);
+                opacity: 1;
+            }
+
+            &:-ms-input-placeholder {
+                /* Internet Explorer 10-11 */
+                color: var(--gray-3);
+            }
+
+            &::-ms-input-placeholder {
+                /* Microsoft Edge */
+                color: var(--gray-3);
+            }
         }
 
         span.error {
@@ -124,5 +167,9 @@ export const GlobalStyles = createGlobalStyle`
 
     input {
         outline-color: var(--brand-3);
+        &:disabled {
+            cursor: not-allowed;
+            background: var(--gray-2);
+        }
     }
 `;

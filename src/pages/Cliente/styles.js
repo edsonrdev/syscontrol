@@ -46,47 +46,100 @@ export const Container = styled.div`
     }
   }
 
-  .client-list {
-    margin-top: 26px;
+  div.valores-emprestimo {
+    margin-bottom: 12px;
 
-    li {
-      padding: 12px;
-      border: 1px solid var(--gray-2);
-      display: flex;
-      justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 
-      &:first-of-type {
-        border-top: 1px solid var(--gray-2);
+    input {
+      font-size: 13px;
+      height: 32px;
+      padding: 0 12px;
+      color: var(--black-1);
+    }
+
+    button {
+      width: 120px;
+      align-self: flex-end;
+    }
+  }
+
+  table.resumo-emprestimo {
+    /* margin: 15px 0 10px 0; */
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+
+    /* display: none; */
+    /* max-width: 100%; */
+    border-spacing: 0;
+
+    border: 1px solid var(--gray-2);
+
+    thead {
+      background: var(--brand-3);
+
+      th {
+        padding: 0 10px;
+        height: 50px;
+        color: var(--white);
+        font-size: 16px;
+        font-weight: 500;
+        text-align: left;
+
+        /* border: 1px solid; */
+
+        &:first-of-type {
+          width: 90px;
+        }
       }
+    }
 
-      .options {
+    tbody {
+      display: flex;
+      flex-direction: column;
+      max-height: 160px;
+      overflow-y: auto;
+      /* scrollbar-gutter: stable; */
+      font-size: 13px;
+
+      /* background: red; */
+
+      tr {
+        /* width: 100%; */
         display: flex;
-        align-items: center;
-        gap: 16px;
+        /* border: 1px solid; */
+        td {
+          padding: 6px 10px;
+          font-family: "Open Sans", sans-serif;
+          /* border: 1px solid; */
 
-        color: var(--gray-2);
-
-        svg {
-          cursor: pointer;
-
-          &.view-details {
-            color: var(--blue-3);
-            transition: color 0.3s ease;
-
-            :hover {
-              color: var(--blue-4);
-            }
+          &:first-of-type {
+            width: 90px;
           }
-          &.edit-client {
-            color: var(--brand-3);
-            transition: color 0.3s ease;
 
-            :hover {
-              color: var(--brand-4);
-            }
+          &:last-of-type {
+            border-right: 1px solid var(--gray-2);
+          }
+
+          &:not(:first-of-type) {
+            flex: 1;
+          }
+        }
+
+        &:not(:last-of-type) {
+          td {
+            border-bottom: 1px solid var(--gray-2);
           }
         }
       }
     }
+  }
+
+  .rodape {
+    display: flex;
+    justify-content: flex-end;
   }
 `;
