@@ -6,7 +6,7 @@ export const User = () => {
   return (
     <Container>
       <div className="user-info">
-        <h3 className="username">Adam Sandler</h3>
+        <h3 className="username">Erick Nascimento</h3>
 
         <div className="avatar">
           <img src={AvatarPhoto} alt="Avatar" />

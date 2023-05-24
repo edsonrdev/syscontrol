@@ -14,9 +14,9 @@ export const Routes = () => (
     <Route path="/entrar" component={SignIn} />
     <Route path="/cadastrar" component={SignUp} />
     <Route path="/painel" component={Painel} />
-    <Route path="/cliente/cadastrar" component={CadastrarCliente} />
-    <Route path="/cliente/editar/:id" component={EditarCliente} />
+    <Route path="/cliente/:id/editar" component={EditarCliente} />
     <Route path="/cliente/:id" component={Cliente} />
+    <Route path="/cliente/cadastrar" component={CadastrarCliente} />
     <Route path="/clientes" component={Clientes} />
   </Switch>
 );

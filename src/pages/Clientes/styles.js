@@ -29,13 +29,17 @@ export const Container = styled.div`
     li {
       padding: 10px 19px;
       border: 1px solid var(--gray-2);
-      border-top: 0;
+
       display: flex;
       align-items: center;
       justify-content: space-between;
       background: var(--white);
       font-size: 14px;
       transition: background 0.1s ease-in-out;
+
+      &:not(:first-of-type) {
+        border-top: 0;
+      }
 
       &:hover {
         background: var(--gray-1);
@@ -84,11 +88,16 @@ export const Container = styled.div`
 
     p {
       font-size: 18px;
-      font-weight: 500;
+      /* font-weight: 500; */
       margin-top: 32px;
       padding-bottom: 10px;
       color: var(--gray-4);
       border-bottom: 1px dashed var(--gray-3);
+
+      span.cliente-pesquisado {
+        color: var(--brand-3);
+        font-weight: 600;
+      }
     }
   }
 `;

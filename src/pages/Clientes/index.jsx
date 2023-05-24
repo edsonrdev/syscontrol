@@ -30,7 +30,7 @@ export const Clientes = () => {
     client.name.toLowerCase().includes(pesquisa.toLowerCase())
   );
 
-  console.log(clientesPesquisados);
+  // console.log(clientesPesquisados);
 
   const {
     showModal,
@@ -121,7 +121,7 @@ export const Clientes = () => {
             <div className="search-form">
               <input
                 type="search"
-                placeholder="Pesquisar pelo nome..."
+                placeholder="Buscar cliente pelo nome..."
                 value={pesquisa}
                 onChange={(e) => setPesquisa(e.target.value)}
               />
@@ -149,16 +149,41 @@ export const Clientes = () => {
               }}
             />
 
-            {clientes.length ? (
+            {/* {clientes.length ? (
               <li className="client-header">
                 <span>Cliente</span>
                 <span>Opções</span>
               </li>
             ) : (
               ""
-            )}
+            )} */}
 
-            {clientes.length !== 0 && clientesPesquisados.length === 0 ? (
+            {clientesPesquisados.length && pesquisa ? (
+              clientesPesquisados.map((cliente) => (
+                <li key={cliente.id}>
+                  <span className="client-name">{cliente.name}</span>
+                  <div className="options">
+                    {/* <Link to={`/cliente/${cliente.id}`}> */}
+                    <Link to={"/"}>
+                      <HiEye
+                        size={17}
+                        className="view-details"
+                        data-tooltip-content="Ver detalhes"
+                      />
+                    </Link>
+                    |
+                    <RiEdit2Fill
+                      size={17}
+                      className="edit-client"
+                      data-tooltip-content="Editar cliente"
+                      onClick={() =>
+                        history.push(`/cliente/${cliente.id}/editar`)
+                      }
+                    />
+                  </div>
+                </li>
+              ))
+            ) : !pesquisa ? (
               clientes.map((cliente) => (
                 <li key={cliente.id}>
                   <span className="client-name">{cliente.name}</span>
@@ -183,7 +208,10 @@ export const Clientes = () => {
                 </li>
               ))
             ) : (
-              <p>Sem clientes cadastrados no Banco de Dados!</p>
+              <p>
+                Sem resultados para esta busca:{" "}
+                <span className="cliente-pesquisado">{pesquisa}</span>
+              </p>
             )}
           </ul>
         </div>
