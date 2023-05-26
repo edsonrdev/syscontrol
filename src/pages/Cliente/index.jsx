@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { useParams, useHistory, Link } from "react-router-dom";
 
 import { Container } from "./styles";
@@ -8,7 +8,9 @@ import { Header } from "../../components/Header";
 import { Button } from "../../components/Button";
 
 import { ModalContext } from "../../providers/modal";
+import { ParcelasContext } from "../../providers/parcelas";
 import { Modal } from "../../components/Modal";
+import { toast } from "react-toastify";
 
 // import { api } from "../../services";
 
@@ -17,36 +19,76 @@ export const Cliente = () => {
   const history = useHistory();
   const [cliente, setCliente] = useState({});
 
-  const {
-    showModal,
-    setShowModal,
-    typeModal,
-    setTypeModal,
-    entityModal,
-    setEntityModal,
-    resetModal,
-  } = useContext(ModalContext);
+  const emprestimoRef = useRef(0);
+  const parcelaRef = useRef(0);
+
+  // console.log(emprestimoRef.current);
+
+  const { parcelas, setParcelas } = useContext(ParcelasContext);
+
+  const handleSimularEmprestimo = () => {
+    let valorEmprestimo = +document.querySelector("#emprestimo").value;
+    let valorParcela = +document.querySelector("#parcela").value;
+
+    if (!valorEmprestimo || !valorParcela) {
+      toast.error("Informe os valores do empréstimo!");
+      return false;
+    }
+
+    emprestimoRef.current = valorEmprestimo;
+    parcelaRef.current = valorParcela;
+
+    let valorRestante = 0;
+    let linhaParcela = "";
+    let arrayParcelas = [];
+
+    // set;
+
+    while (valorEmprestimo >= valorParcela) {
+      valorRestante = valorEmprestimo + valorEmprestimo * 0.1 - valorParcela;
+
+      linhaParcela = `R$ ${valorEmprestimo.toFixed(
+        2
+      )} + 10% - R$ ${valorParcela.toFixed(2)} = R$ ${valorRestante.toFixed(
+        2
+      )}`;
+
+      arrayParcelas.push(linhaParcela);
+
+      valorEmprestimo = valorRestante;
+    }
+
+    setParcelas([...arrayParcelas]);
+
+    document.querySelector("#emprestimo").value = "";
+    document.querySelector("#parcela").value = "";
+  };
+
+  const handleContratarEmprestimo = () => {
+    // console.log(emprestimoRef.current, parcelaRef.current);
+    const dadosEmprestimo = {
+      clientId: id,
+      value: emprestimoRef.current,
+      portion: parcelaRef.current,
+    };
+
+    // console.log(dadosEmprestimo);
+
+    // api.post("/emprestimos", dadosEmprestimo);
+  };
+
+  // console.log(emprestimoRef.current, parcelaRef.current);
+
+  const { showModal, setShowModal } = useContext(ModalContext);
 
   useEffect(() => {
     api
-      .get(`/clients/${id}`)
+      .get(`/clientes/${id}`)
       .then((resp) => {
         setCliente(resp.data);
       })
       .catch((err) => console.log(err));
   }, [id]);
-
-  const handleSimularEmprestimo = () => {
-    const valorEmprestimo = +document.querySelector("#emprestimo").value;
-    const valorParcela = +document.querySelector("#parcela").value;
-
-    if (valorEmprestimo && valorParcela) {
-    }
-    // console.log(typeof valorEmprestimo, typeof valorParcela);
-    // setEntityModal({});
-    // setTypeModal("simularEmprestimo");
-    // setShowModal(true);
-  };
 
   return (
     <Container>
@@ -69,6 +111,7 @@ export const Cliente = () => {
       </main>
 
       {showModal && (
+        // <ParcelasProvider>
         <Modal title="Simular Empréstimo" width="lg">
           <div className="valores-emprestimo">
             <div className="row">
@@ -95,7 +138,6 @@ export const Cliente = () => {
               </div>
             </div>
 
-            {/* <div className="form-group"> */}
             <Button
               variant="primary"
               size="sm"
@@ -103,56 +145,46 @@ export const Cliente = () => {
             >
               Simular
             </Button>
-            {/* </div> */}
           </div>
 
-          {/* <hr /> */}
+          {parcelas.length ? (
+            <>
+              <hr />
+              <table className="resumo-emprestimo">
+                <thead>
+                  <tr>
+                    <th>Parcela</th>
+                    <th>Valor restante</th>
+                  </tr>
+                </thead>
 
-          <table className="resumo-emprestimo">
-            <thead>
-              <tr>
-                <th>Parcela</th>
-                <th>Valor restante</th>
-              </tr>
-            </thead>
+                <tbody>
+                  {parcelas.length
+                    ? parcelas.map((parcela, indice) => (
+                        <tr key={indice}>
+                          <td>Parcela {indice + 1}</td>
+                          <td>{parcela}</td>
+                        </tr>
+                      ))
+                    : ""}
+                </tbody>
+              </table>
 
-            <tbody>
-              <tr>
-                <td>Parcela 1</td>
-                <td>R$ 2000,00 + R$ 200,00 - R$ 400,00 = R$ 1800,00</td>
-              </tr>
-              <tr>
-                <td>Parcela 2</td>
-                <td>R$ 1800,00 + R$ 180,00 - R$ 400,00 = R$ 1580,00</td>
-              </tr>
-              <tr>
-                <td>Parcela 3</td>
-                <td>R$ 1580,00 + R$ 158,00 - R$ 400,00 = R$ 1338,00</td>
-              </tr>
-              <tr>
-                <td>Parcela 4</td>
-                <td>R$ 1338,00 + R$ 133,80 - R$ 400,00 = R$ 1071,80</td>
-              </tr>
-              <tr>
-                <td>Parcela 5</td>
-                <td>R$ 1071,80 + R$ 107,18 - R$ 400,00 = R$ 778,98</td>
-              </tr>
-              <tr>
-                <td>Parcela 6</td>
-                <td>R$ 778,98 + R$ 77,89 - R$ 400,00 = R$ 456,87</td>
-              </tr>
-              <tr>
-                <td>Parcela 7</td>
-                <td>R$ 456,87 + R$ 45,68 - R$ 400,00 = R$ 102,55</td>
-              </tr>
-            </tbody>
-            <div className="rodape">
-              <Button variant="primary" size="sm">
-                Contratar Empréstimo
-              </Button>
-            </div>
-          </table>
+              <div className="rodape">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={handleContratarEmprestimo}
+                >
+                  Contratar Empréstimo
+                </Button>
+              </div>
+            </>
+          ) : (
+            ""
+          )}
         </Modal>
+        // </ParcelasProvider>
       )}
     </Container>
   );

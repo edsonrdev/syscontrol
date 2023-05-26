@@ -30,7 +30,7 @@ export const Clientes = () => {
     client.name.toLowerCase().includes(pesquisa.toLowerCase())
   );
 
-  // console.log(clientesPesquisados);
+  console.log(clientes);
 
   const {
     showModal,
@@ -60,7 +60,7 @@ export const Clientes = () => {
 
   const getClientes = async () => {
     try {
-      const { data } = await api.get("/clients");
+      const { data } = await api.get("/clientes");
       setClientes(data);
     } catch (err) {
       toast.error(err.response.data.message);
@@ -69,7 +69,7 @@ export const Clientes = () => {
 
   useEffect(() => {
     getClientes();
-  }, []);
+  }, [clientes]);
 
   useEffect(() => {
     if (formState.isSubmitSuccessful) {

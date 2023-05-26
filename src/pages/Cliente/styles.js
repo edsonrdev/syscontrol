@@ -68,7 +68,8 @@ export const Container = styled.div`
 
   table.resumo-emprestimo {
     /* margin: 15px 0 10px 0; */
-    margin-bottom: 20px;
+    margin-top: -10px;
+    margin-bottom: 12px;
     display: flex;
     flex-direction: column;
 
@@ -100,7 +101,7 @@ export const Container = styled.div`
     tbody {
       display: flex;
       flex-direction: column;
-      max-height: 160px;
+      max-height: 180px;
       overflow-y: auto;
       /* scrollbar-gutter: stable; */
       font-size: 13px;
@@ -118,10 +119,6 @@ export const Container = styled.div`
 
           &:first-of-type {
             width: 90px;
-          }
-
-          &:last-of-type {
-            border-right: 1px solid var(--gray-2);
           }
 
           &:not(:first-of-type) {

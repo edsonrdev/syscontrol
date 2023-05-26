@@ -55,7 +55,7 @@ export const GlobalStyles = createGlobalStyle`
         ::-webkit-scrollbar-thumb {
             border-radius: 16px;
             background-color: var(--brand-2);
-            border: 3px solid transparent;
+            border: 4px solid transparent;
             background-clip: content-box;
         }
     }
