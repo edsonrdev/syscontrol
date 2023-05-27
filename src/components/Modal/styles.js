@@ -67,7 +67,7 @@ export const Content = styled.div`
     padding: 12px 16px;
 
     .form-group button {
-      margin-top: 10px;
+      /* margin-top: 10px; */
     }
   }
 `;

@@ -60,10 +60,37 @@ export const Container = styled.div`
       color: var(--black-1);
     }
 
-    button {
+    > .form-group {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      /* background: red; */
+      margin-bottom: 0;
+
+      .loan-values {
+        text-align: right;
+      }
+
+      p {
+        font-weight: 600;
+        font-size: 13px;
+
+        span {
+          font-weight: 400;
+          font-size: 13px;
+        }
+      }
+
+      button {
+        align-content: flex-end;
+      }
+    }
+
+    /* button {
       width: 120px;
       align-self: flex-end;
-    }
+    } */
   }
 
   table.resumo-emprestimo {

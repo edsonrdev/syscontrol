@@ -20,7 +20,7 @@ export const EditarCliente = () => {
 
   useEffect(() => {
     api
-      .get(`/clients/${id}`)
+      .get(`/clientes/${id}`)
       .then((resp) => {
         setCliente(resp.data);
       })
@@ -45,7 +45,7 @@ export const EditarCliente = () => {
   const submitCallback = async (data) => {
     // console.log(data);
     api
-      .put(`/clients/${id}`, data)
+      .put(`/clientes/${id}`, data)
       .then((resp) => {
         // console.log(resp);
         toast.success("Cliente editado com sucesso!");

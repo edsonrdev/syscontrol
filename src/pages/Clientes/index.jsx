@@ -78,36 +78,14 @@ export const Clientes = () => {
   }, [formState, reset]);
 
   const submitCallback = async (data) => {
-    if (typeModal === "cadastrarCliente") {
-      try {
-        await api.post("/clients", data);
-        toast.success("Cliente cadastrado com sucesso!");
-      } catch (err) {
-        toast.error(err.response.data.message);
-      }
+    try {
+      await api.post("/clientes", data);
+      toast.success("Cliente cadastrado com sucesso!");
+    } catch (err) {
+      toast.error(err.response.data.message);
     }
 
-    if (typeModal === "editarCliente") {
-      console.log("editar cliente mané");
-    }
-
-    setTypeModal("");
-    setEntityModal({});
     setShowModal(false);
-  };
-
-  const handleCliente = (cliente) => {
-    if (!(typeof cliente === "object" && cliente !== null)) {
-      // console.log("cadastrar");
-      setEntityModal({});
-      setTypeModal("cadastrarCliente");
-      setShowModal(true);
-    } else if (typeof cliente === "object" && cliente !== null) {
-      // console.log("editar");
-      setEntityModal({ cliente });
-      setTypeModal("editarCliente");
-      setShowModal(true);
-    }
   };
 
   return (
@@ -128,7 +106,7 @@ export const Clientes = () => {
               />
             </div>
 
-            <Button variant="primary" onClick={() => handleCliente()}>
+            <Button variant="primary" onClick={() => setShowModal(true)}>
               Cadastrar cliente
             </Button>
           </div>
@@ -168,7 +146,7 @@ export const Clientes = () => {
                   <div className="options">
                     <HiEye
                       className="view-details"
-                      data-tooltip-content="Ver detalhes"
+                      data-tooltip-content="Acessar cliente"
                       onClick={() => history.push(`/cliente/${cliente.id}`)}
                     />
 

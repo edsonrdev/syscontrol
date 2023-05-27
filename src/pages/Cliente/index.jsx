@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext, useRef } from "react";
-import { useParams, useHistory, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { Container } from "./styles";
 import { api } from "../../services";
@@ -12,17 +12,14 @@ import { ParcelasContext } from "../../providers/parcelas";
 import { Modal } from "../../components/Modal";
 import { toast } from "react-toastify";
 
-// import { api } from "../../services";
-
 export const Cliente = () => {
   const { id } = useParams();
-  const history = useHistory();
   const [cliente, setCliente] = useState({});
 
   const emprestimoRef = useRef(0);
   const parcelaRef = useRef(0);
 
-  // console.log(emprestimoRef.current);
+  // console.log(cliente);
 
   const { parcelas, setParcelas } = useContext(ParcelasContext);
 
@@ -41,8 +38,6 @@ export const Cliente = () => {
     let valorRestante = 0;
     let linhaParcela = "";
     let arrayParcelas = [];
-
-    // set;
 
     while (valorEmprestimo >= valorParcela) {
       valorRestante = valorEmprestimo + valorEmprestimo * 0.1 - valorParcela;
@@ -65,19 +60,26 @@ export const Cliente = () => {
   };
 
   const handleContratarEmprestimo = () => {
-    // console.log(emprestimoRef.current, parcelaRef.current);
     const dadosEmprestimo = {
       clientId: id,
       value: emprestimoRef.current,
       portion: parcelaRef.current,
     };
 
-    // console.log(dadosEmprestimo);
+    api
+      .post("/emprestimos", dadosEmprestimo)
+      .then((_) => {
+        toast.success("Empréstimo criado com sucesso!");
+      })
+      .catch((err) => {
+        toast.error(`Erro ao criar empréstimo: ${err}`);
+      });
 
-    // api.post("/emprestimos", dadosEmprestimo);
+    emprestimoRef.current = 0;
+    parcelaRef.current = 0;
+
+    setShowModal(false);
   };
-
-  // console.log(emprestimoRef.current, parcelaRef.current);
 
   const { showModal, setShowModal } = useContext(ModalContext);
 
@@ -89,6 +91,8 @@ export const Cliente = () => {
       })
       .catch((err) => console.log(err));
   }, [id]);
+
+  // console.log(cliente?.loans);
 
   return (
     <Container>
@@ -106,12 +110,19 @@ export const Cliente = () => {
 
           <hr />
 
-          <p>O cliente não possui empréstimos no momento.</p>
+          {!cliente?.loans?.length ? (
+            <p>O cliente não possui empréstimos no momento.</p>
+          ) : (
+            // <p>O cliente tem {cliente.loans.length} empréstimo.</p>
+            // código do cliente que tem empréstimo vem aqui...
+            // <p>teste</p>
+
+            cliente?.loans.map((l) => console.log(l.movements))
+          )}
         </div>
       </main>
 
       {showModal && (
-        // <ParcelasProvider>
         <Modal title="Simular Empréstimo" width="lg">
           <div className="valores-emprestimo">
             <div className="row">
@@ -138,13 +149,29 @@ export const Cliente = () => {
               </div>
             </div>
 
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handleSimularEmprestimo}
-            >
-              Simular
-            </Button>
+            <div className="form-group">
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleSimularEmprestimo}
+              >
+                Simular
+              </Button>
+
+              {emprestimoRef.current && parcelaRef.current ? (
+                <div className="loan-values">
+                  <p>
+                    Empréstimo:{" "}
+                    <span>R$ {emprestimoRef.current.toFixed(2)}</span>
+                  </p>
+                  <p>
+                    Parcela: <span>R$ {parcelaRef.current.toFixed(2)}</span>
+                  </p>
+                </div>
+              ) : (
+                ""
+              )}
+            </div>
           </div>
 
           {parcelas.length ? (
@@ -153,8 +180,8 @@ export const Cliente = () => {
               <table className="resumo-emprestimo">
                 <thead>
                   <tr>
-                    <th>Parcela</th>
-                    <th>Valor restante</th>
+                    <th>Parcelas</th>
+                    <th>Devido após cada parcela</th>
                   </tr>
                 </thead>
 
@@ -184,7 +211,6 @@ export const Cliente = () => {
             ""
           )}
         </Modal>
-        // </ParcelasProvider>
       )}
     </Container>
   );

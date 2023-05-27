@@ -117,7 +117,7 @@ export const Container = styled.div`
 
     button {
       width: 140px;
-      margin-top: 10px;
+      /* margin-top: 10px; */
     }
   }
 `;
