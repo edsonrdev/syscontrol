@@ -11,6 +11,9 @@ import { ModalContext } from "../../providers/modal";
 import { ParcelasContext } from "../../providers/parcelas";
 import { Modal } from "../../components/Modal";
 import { toast } from "react-toastify";
+import { BsCheckCircleFill } from "react-icons/bs";
+
+import { convertDate } from "../../utils/helpers";
 
 export const Cliente = () => {
   const { id } = useParams();
@@ -92,7 +95,13 @@ export const Cliente = () => {
       .catch((err) => console.log(err));
   }, [id]);
 
-  // console.log(cliente?.loans);
+  const handleToPay = () => {
+    console.log("to pay...");
+  };
+
+  const handleToTake = () => {
+    console.log("to take...");
+  };
 
   return (
     <Container>
@@ -103,9 +112,11 @@ export const Cliente = () => {
           <div className="search-client-section">
             <h1 className="page-title">Cliente: {cliente.name}</h1>
 
-            <Button variant="primary" onClick={() => setShowModal(true)}>
-              Simular Empréstimo
-            </Button>
+            {!cliente.loans?.length && (
+              <Button variant="primary" onClick={() => setShowModal(true)}>
+                Simular Empréstimo
+              </Button>
+            )}
           </div>
 
           <hr />
@@ -113,11 +124,86 @@ export const Cliente = () => {
           {!cliente?.loans?.length ? (
             <p>O cliente não possui empréstimos no momento.</p>
           ) : (
+            <table className="cliente-loan">
+              <thead>
+                <tr>
+                  <th>Nº da parcela</th>
+                  <th>Vencimento</th>
+                  <th>Valor da parcela</th>
+                  <th>Valor pago</th>
+                  <th>Status</th>
+                  <th>Valor após pagar</th>
+                  <th>Opções</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {cliente.loans[0]?.movements.map((m) => (
+                  <tr key={m.id} className={m.status === 3 ? "expired" : ""}>
+                    <td>Parcela {m.id}</td>
+                    <td>{convertDate(m.expireDate)}</td>
+                    <td>{cliente.loans[0].portion.toFixed(2)}</td>
+                    <td>{m.paidValue === 0 ? "---" : m.paidValue}</td>
+                    <td>
+                      <span
+                        className={
+                          m.status === 0
+                            ? "open"
+                            : m.status === 1
+                            ? "fullPaid"
+                            : m.status === 2
+                            ? "partialPaid"
+                            : "expired"
+                        }
+                      >
+                        {m.status === 0
+                          ? "Em aberto"
+                          : m.status === 1
+                          ? "Pago total"
+                          : m.status === 2
+                          ? "Pago parcialmente"
+                          : "Em atraso"}
+                      </span>
+                    </td>
+                    <td>
+                      {m.previousValue.toFixed(2)} + 10% -{" "}
+                      {cliente.loans[0].portion} = {m.remainderValue.toFixed(2)}
+                    </td>
+                    <td className="options">
+                      {m.current ? (
+                        m.status === 1 || m.status === 2 ? (
+                          <span>---</span>
+                        ) : (
+                          <>
+                            <button className="input" onClick={handleToPay}>
+                              Pagar
+                            </button>
+                            {m.status !== 3 && (
+                              <>
+                                OU{" "}
+                                <button
+                                  className="output"
+                                  onClick={handleToTake}
+                                >
+                                  Pegar
+                                </button>
+                              </>
+                            )}
+                          </>
+                        )
+                      ) : (
+                        <span>---</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
             // <p>O cliente tem {cliente.loans.length} empréstimo.</p>
             // código do cliente que tem empréstimo vem aqui...
             // <p>teste</p>
 
-            cliente?.loans.map((l) => console.log(l.movements))
+            // cliente?.loans.map((l) => console.log(l.movements))
           )}
         </div>
       </main>

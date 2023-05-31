@@ -46,6 +46,115 @@ export const Container = styled.div`
     }
   }
 
+  table.cliente-loan {
+    width: 100%;
+    border-spacing: 0;
+    /* border: 1px solid var(--gray-2); */
+    border-top: 0;
+
+    thead {
+      background: var(--brand-3);
+      th {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        color: var(--white);
+        text-align: left;
+        padding: 14px 10px;
+        text-shadow: 1px 1.5px 1px rgba(0, 0, 0, 0.15);
+        border-top: 1px solid var(--brand-4);
+        border-bottom: 1px solid var(--brand-4);
+        border-right: 1px solid var(--brand-4);
+
+        &:first-of-type {
+          border-left: 1px solid var(--brand-4);
+        }
+        &:first-of-type {
+          border-left: 1px solid var(--brand-4);
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        &.expired {
+          background: var(--red-0);
+        }
+
+        td {
+          padding: 10px;
+          font-size: 13px;
+          border-bottom: 1px solid var(--gray-2);
+          border-right: 1px solid var(--gray-2);
+
+          &:first-of-type {
+            border-left: 1px solid var(--gray-2);
+          }
+
+          &:last-child {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+          }
+
+          &:not(.options) span {
+            font-size: 13.5px;
+            font-weight: 600;
+            &.open {
+              color: var(--gray-4);
+            }
+            &.fullPaid {
+              color: var(--brand-3);
+            }
+            &.partialPaid {
+              color: var(--blue-3);
+            }
+            &.expired {
+              color: var(--red-3);
+            }
+          }
+
+          &.options {
+            /* span {
+              font-weight: 600;
+              display: flex;
+              align-items: center;
+              gap: 5px;
+            } */
+          }
+        }
+      }
+
+      button {
+        font-weight: 500;
+        color: var(--white);
+        padding: 4px;
+        min-width: 86px;
+        border-radius: 4px;
+        border: 1.5px solid;
+        cursor: pointer;
+        transition: background 0.2s ease-in-out;
+
+        &.input {
+          background: var(--brand-3);
+          border-color: var(--brand-4);
+
+          &:hover {
+            background: var(--brand-4);
+          }
+        }
+
+        &.output {
+          background: var(--red-3);
+          border-color: var(--red-4);
+
+          &:hover {
+            background: var(--red-4);
+          }
+        }
+      }
+    }
+  }
+
   div.valores-emprestimo {
     margin-bottom: 12px;
 

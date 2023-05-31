@@ -24,10 +24,11 @@ export const GlobalStyles = createGlobalStyle`
         --gray-3: #aeaeae;
         --gray-4: #808080;
 
+        --red-0: #ffd6ed;
         --red-1: #ffbed0;
         --red-2: #ff94b1;
-        --red-3: #ff6a92;
-        --red-4: #ff396e;
+        --red-3: #ff648d;
+        --red-4: #fa1e58;
 
         --blue-1: #beddff;
         --blue-2: #87c1ff;
