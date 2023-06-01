@@ -275,4 +275,70 @@ export const Container = styled.div`
     display: flex;
     justify-content: flex-end;
   }
+
+  .toggle {
+    position: absolute;
+    /* margin-left: -9999px;
+    visibility: hidden; */
+  }
+
+  .toggle + label {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    user-select: none;
+  }
+
+  .toggle-shadow + label {
+    padding: 2px;
+    width: 388px; // 388 / 2 = 194
+    height: 47px;
+    /* background-color: #dddddd; */
+    border-radius: 4px;
+  }
+
+  .toggle-shadow + label:before,
+  .toggle-shadow + label:after {
+    display: block;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    bottom: 1px;
+    content: "";
+  }
+  .toggle-shadow + label:after {
+    content: "Parcela";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .toggle-shadow + label:before {
+    right: 1px;
+    background-color: var(--brand-4);
+    border-radius: 4px;
+    transition: all 0.4s;
+  }
+  .toggle-shadow + label:after {
+    color: var(--white);
+    text-shadow: 0 2px rgba(0, 0, 0, 0.15);
+    letter-spacing: 0.4px;
+    width: 194px;
+    background-color: var(--brand-3);
+    border-radius: 4px;
+    box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s;
+  }
+
+  .toggle-shadow:checked + label:before {
+    background-color: var(--brand-4);
+  }
+  .toggle-shadow:checked + label:after {
+    transform: translateX(100%);
+    content: "Outro valor";
+  }
+
+  .btn-to-pay {
+    margin-top: 8px;
+  }
 `;

@@ -19,10 +19,11 @@ export const Cliente = () => {
   const { id } = useParams();
   const [cliente, setCliente] = useState({});
 
+  // const [checkbox, setCheckbox] = useState(false);
+  // const [input, setInput] = useState(400);
+
   const emprestimoRef = useRef(0);
   const parcelaRef = useRef(0);
-
-  // console.log(cliente);
 
   const { parcelas, setParcelas } = useContext(ParcelasContext);
 
@@ -84,7 +85,8 @@ export const Cliente = () => {
     setShowModal(false);
   };
 
-  const { showModal, setShowModal } = useContext(ModalContext);
+  const { showModal, setShowModal, typeModal, setTypeModal } =
+    useContext(ModalContext);
 
   useEffect(() => {
     api
@@ -96,11 +98,35 @@ export const Cliente = () => {
   }, [id]);
 
   const handleToPay = () => {
-    console.log("to pay...");
+    setTypeModal("toPay");
+    setShowModal(true);
   };
 
   const handleToTake = () => {
     console.log("to take...");
+  };
+
+  const handleChangeCheckbox = (e) => {
+    if (!e.target.checked) {
+      document.querySelector("#payment-amount").setAttribute("disabled", true);
+      document.querySelector("#payment-amount").setAttribute("value", 400.0);
+      return false;
+    }
+
+    if (e.target.checked) {
+      document.querySelector("#payment-amount").setAttribute("disabled", false);
+      document.querySelector("#payment-amount").setAttribute("value", "");
+      return false;
+    }
+    // if (checkbox === "on") {
+    //   document
+    //     .querySelector("#payment-amount")
+    //     .setAttribute("disabled", checkbox);
+    // } else {
+    //   document
+    //     .querySelector("#payment-amount")
+    //     .setAttribute("disabled", checkbox);
+    // }
   };
 
   return (
@@ -113,7 +139,13 @@ export const Cliente = () => {
             <h1 className="page-title">Cliente: {cliente.name}</h1>
 
             {!cliente.loans?.length && (
-              <Button variant="primary" onClick={() => setShowModal(true)}>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setTypeModal("loanSimulation");
+                  setShowModal(true);
+                }}
+              >
                 Simular Empréstimo
               </Button>
             )}
@@ -199,16 +231,11 @@ export const Cliente = () => {
                 ))}
               </tbody>
             </table>
-            // <p>O cliente tem {cliente.loans.length} empréstimo.</p>
-            // código do cliente que tem empréstimo vem aqui...
-            // <p>teste</p>
-
-            // cliente?.loans.map((l) => console.log(l.movements))
           )}
         </div>
       </main>
 
-      {showModal && (
+      {showModal && typeModal === "loanSimulation" ? (
         <Modal title="Simular Empréstimo" width="lg">
           <div className="valores-emprestimo">
             <div className="row">
@@ -297,6 +324,31 @@ export const Cliente = () => {
             ""
           )}
         </Modal>
+      ) : showModal && typeModal === "toPay" ? (
+        <Modal title="Realizar pagamento" width="md">
+          <div className="form-group">
+            <label htmlFor="emprestimo">Tipo de pagamento:</label>
+            <input
+              type="checkbox"
+              id="toggle"
+              className="toggle toggle-shadow"
+              // value={checkbox}
+              onChange={handleChangeCheckbox}
+            />
+            <label htmlFor="toggle"></label>
+          </div>
+          <div className="form-group">
+            <label htmlFor="payment-amount">Valor (R$):</label>
+            <input type="number" min="1" step="0.01" id="payment-amount" />
+          </div>
+          <div className="form-group">
+            <Button variant="primary" size="md" className="btn-to-pay">
+              Pagar
+            </Button>
+          </div>
+        </Modal>
+      ) : (
+        ""
       )}
     </Container>
   );
