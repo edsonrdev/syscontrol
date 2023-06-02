@@ -278,8 +278,8 @@ export const Container = styled.div`
 
   .toggle {
     position: absolute;
-    /* margin-left: -9999px;
-    visibility: hidden; */
+    margin-left: -9999px;
+    visibility: hidden;
   }
 
   .toggle + label {

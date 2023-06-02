@@ -19,8 +19,18 @@ export const Cliente = () => {
   const { id } = useParams();
   const [cliente, setCliente] = useState({});
 
-  // const [checkbox, setCheckbox] = useState(false);
-  // const [input, setInput] = useState(400);
+  const [checkbox, setCheckbox] = useState(false);
+  useEffect(() => {
+    api
+      .get(`/clientes/${id}`)
+      .then((resp) => {
+        setCliente(resp.data);
+      })
+      .catch((err) => console.log(err));
+    // console.log(cliente.loans[0]?.portion);
+  }, [id]);
+
+  const [input, setInput] = useState(cliente?.loans[0].portion || 0);
 
   const emprestimoRef = useRef(0);
   const parcelaRef = useRef(0);
@@ -88,45 +98,31 @@ export const Cliente = () => {
   const { showModal, setShowModal, typeModal, setTypeModal } =
     useContext(ModalContext);
 
-  useEffect(() => {
-    api
-      .get(`/clientes/${id}`)
-      .then((resp) => {
-        setCliente(resp.data);
-      })
-      .catch((err) => console.log(err));
-  }, [id]);
-
-  const handleToPay = () => {
+  const handleClickToPay = () => {
     setTypeModal("toPay");
     setShowModal(true);
   };
 
-  const handleToTake = () => {
-    console.log("to take...");
+  const handleClickToTake = () => {
+    setTypeModal("toTake");
+    setShowModal(true);
   };
 
   const handleChangeCheckbox = (e) => {
-    if (!e.target.checked) {
-      document.querySelector("#payment-amount").setAttribute("disabled", true);
-      document.querySelector("#payment-amount").setAttribute("value", 400.0);
-      return false;
+    setCheckbox(!checkbox);
+
+    if (checkbox) {
+      setInput(cliente.loans[0].portion);
     }
 
-    if (e.target.checked) {
-      document.querySelector("#payment-amount").setAttribute("disabled", false);
-      document.querySelector("#payment-amount").setAttribute("value", "");
-      return false;
+    if (!checkbox) {
+      setInput("");
+      document.querySelector("#payment-amount").value = "";
     }
-    // if (checkbox === "on") {
-    //   document
-    //     .querySelector("#payment-amount")
-    //     .setAttribute("disabled", checkbox);
-    // } else {
-    //   document
-    //     .querySelector("#payment-amount")
-    //     .setAttribute("disabled", checkbox);
-    // }
+  };
+
+  const handleToPay = () => {
+    console.log(input);
   };
 
   return (
@@ -170,9 +166,9 @@ export const Cliente = () => {
               </thead>
 
               <tbody>
-                {cliente.loans[0]?.movements.map((m) => (
+                {cliente.loans[0]?.movements.map((m, index) => (
                   <tr key={m.id} className={m.status === 3 ? "expired" : ""}>
-                    <td>Parcela {m.id}</td>
+                    <td>Parcela {index + 1}</td>
                     <td>{convertDate(m.expireDate)}</td>
                     <td>{cliente.loans[0].portion.toFixed(2)}</td>
                     <td>{m.paidValue === 0 ? "---" : m.paidValue}</td>
@@ -207,7 +203,10 @@ export const Cliente = () => {
                           <span>---</span>
                         ) : (
                           <>
-                            <button className="input" onClick={handleToPay}>
+                            <button
+                              className="input"
+                              onClick={handleClickToPay}
+                            >
                               Pagar
                             </button>
                             {m.status !== 3 && (
@@ -215,7 +214,7 @@ export const Cliente = () => {
                                 OU{" "}
                                 <button
                                   className="output"
-                                  onClick={handleToTake}
+                                  onClick={handleClickToTake}
                                 >
                                   Pegar
                                 </button>
@@ -332,17 +331,30 @@ export const Cliente = () => {
               type="checkbox"
               id="toggle"
               className="toggle toggle-shadow"
-              // value={checkbox}
-              onChange={handleChangeCheckbox}
+              value={checkbox}
+              onChange={(e) => handleChangeCheckbox(e)}
             />
             <label htmlFor="toggle"></label>
           </div>
           <div className="form-group">
             <label htmlFor="payment-amount">Valor (R$):</label>
-            <input type="number" min="1" step="0.01" id="payment-amount" />
+            <input
+              type="number"
+              min="1"
+              step="0.01"
+              id="payment-amount"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              disabled={!checkbox}
+            />
           </div>
           <div className="form-group">
-            <Button variant="primary" size="md" className="btn-to-pay">
+            <Button
+              variant="primary"
+              size="md"
+              className="btn-to-pay"
+              onClick={handleToPay}
+            >
               Pagar
             </Button>
           </div>
