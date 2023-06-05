@@ -18,8 +18,20 @@ import { convertDate } from "../../utils/helpers";
 export const Cliente = () => {
   const { id } = useParams();
   const [cliente, setCliente] = useState({});
-
   const [checkbox, setCheckbox] = useState(false);
+  const [input, setInput] = useState(0);
+  const emprestimoRef = useRef(0);
+  const parcelaRef = useRef(0);
+
+  const {
+    dataModal,
+    showModal,
+    setShowModal,
+    typeModal,
+    setTypeModal,
+    setDataModal,
+  } = useContext(ModalContext);
+
   useEffect(() => {
     api
       .get(`/clientes/${id}`)
@@ -30,14 +42,14 @@ export const Cliente = () => {
     // console.log(cliente.loans[0]?.portion);
   }, [id]);
 
-  const [input, setInput] = useState(cliente?.loans[0].portion || 0);
-
-  const emprestimoRef = useRef(0);
-  const parcelaRef = useRef(0);
-
   const { parcelas, setParcelas } = useContext(ParcelasContext);
 
-  const handleSimularEmprestimo = () => {
+  // simulação e contratação de empréstimos
+  const handleShowSimulationModal = () => {
+    setTypeModal("simulation-modal");
+    setShowModal(true);
+  };
+  const handleLoanSimulation = () => {
     let valorEmprestimo = +document.querySelector("#emprestimo").value;
     let valorParcela = +document.querySelector("#parcela").value;
 
@@ -72,8 +84,7 @@ export const Cliente = () => {
     document.querySelector("#emprestimo").value = "";
     document.querySelector("#parcela").value = "";
   };
-
-  const handleContratarEmprestimo = () => {
+  const handleHireLoan = () => {
     const dadosEmprestimo = {
       clientId: id,
       value: emprestimoRef.current,
@@ -95,35 +106,26 @@ export const Cliente = () => {
     setShowModal(false);
   };
 
-  const { showModal, setShowModal, typeModal, setTypeModal } =
-    useContext(ModalContext);
-
-  const handleClickToPay = () => {
-    setTypeModal("toPay");
+  // pagamento de empréstimos
+  const handleShowPayModal = (value) => {
+    setDataModal(value);
+    setTypeModal("to-pay-modal");
     setShowModal(true);
+    // console.log(checkbox);
   };
 
-  const handleClickToTake = () => {
-    setTypeModal("toTake");
-    setShowModal(true);
-  };
-
-  const handleChangeCheckbox = (e) => {
-    setCheckbox(!checkbox);
-
-    if (checkbox) {
-      setInput(cliente.loans[0].portion);
-    }
-
+  useEffect(() => {
+    // console.log(checkbox);
     if (!checkbox) {
-      setInput("");
-      document.querySelector("#payment-amount").value = "";
+      setInput(dataModal);
+      console.log("checkbox desmarcado - parcela");
+    } else {
+      setDataModal("");
+      console.log("checkbox marcado - outro valor");
     }
-  };
+  }, [checkbox]);
 
-  const handleToPay = () => {
-    console.log(input);
-  };
+  // console.log(checkbox);
 
   return (
     <Container>
@@ -135,13 +137,7 @@ export const Cliente = () => {
             <h1 className="page-title">Cliente: {cliente.name}</h1>
 
             {!cliente.loans?.length && (
-              <Button
-                variant="primary"
-                onClick={() => {
-                  setTypeModal("loanSimulation");
-                  setShowModal(true);
-                }}
-              >
+              <Button variant="primary" onClick={handleShowSimulationModal}>
                 Simular Empréstimo
               </Button>
             )}
@@ -205,19 +201,15 @@ export const Cliente = () => {
                           <>
                             <button
                               className="input"
-                              onClick={handleClickToPay}
+                              onClick={() =>
+                                handleShowPayModal(cliente?.loans[0]?.portion)
+                              }
                             >
                               Pagar
                             </button>
                             {m.status !== 3 && (
                               <>
-                                OU{" "}
-                                <button
-                                  className="output"
-                                  onClick={handleClickToTake}
-                                >
-                                  Pegar
-                                </button>
+                                OU <button className="output">Pegar</button>
                               </>
                             )}
                           </>
@@ -234,7 +226,7 @@ export const Cliente = () => {
         </div>
       </main>
 
-      {showModal && typeModal === "loanSimulation" ? (
+      {showModal && typeModal === "simulation-modal" && (
         <Modal title="Simular Empréstimo" width="lg">
           <div className="valores-emprestimo">
             <div className="row">
@@ -265,7 +257,7 @@ export const Cliente = () => {
               <Button
                 variant="primary"
                 size="sm"
-                onClick={handleSimularEmprestimo}
+                onClick={handleLoanSimulation}
               >
                 Simular
               </Button>
@@ -310,11 +302,7 @@ export const Cliente = () => {
               </table>
 
               <div className="rodape">
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={handleContratarEmprestimo}
-                >
+                <Button variant="primary" size="sm" onClick={handleHireLoan}>
                   Contratar Empréstimo
                 </Button>
               </div>
@@ -323,7 +311,9 @@ export const Cliente = () => {
             ""
           )}
         </Modal>
-      ) : showModal && typeModal === "toPay" ? (
+      )}
+
+      {showModal && typeModal === "to-pay-modal" && (
         <Modal title="Realizar pagamento" width="md">
           <div className="form-group">
             <label htmlFor="emprestimo">Tipo de pagamento:</label>
@@ -332,7 +322,7 @@ export const Cliente = () => {
               id="toggle"
               className="toggle toggle-shadow"
               value={checkbox}
-              onChange={(e) => handleChangeCheckbox(e)}
+              onChange={(e) => setCheckbox(e.target.checked)}
             />
             <label htmlFor="toggle"></label>
           </div>
@@ -343,24 +333,17 @@ export const Cliente = () => {
               min="1"
               step="0.01"
               id="payment-amount"
-              value={input}
+              value={dataModal}
               onChange={(e) => setInput(e.target.value)}
               disabled={!checkbox}
             />
           </div>
           <div className="form-group">
-            <Button
-              variant="primary"
-              size="md"
-              className="btn-to-pay"
-              onClick={handleToPay}
-            >
+            <Button variant="primary" size="md" className="btn-to-pay">
               Pagar
             </Button>
           </div>
         </Modal>
-      ) : (
-        ""
       )}
     </Container>
   );

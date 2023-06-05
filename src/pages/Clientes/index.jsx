@@ -37,9 +37,8 @@ export const Clientes = () => {
     setShowModal,
     typeModal,
     setTypeModal,
-    entityModal,
-    setEntityModal,
-    // setModal,
+    dataModal,
+    setDataModal,
     resetModal,
   } = useContext(ModalContext);
 

@@ -4,24 +4,24 @@ export const ModalContext = createContext();
 
 export const ModalProvider = ({ children }) => {
   const [typeModal, setTypeModal] = useState("");
-  const [entityModal, setEntityModal] = useState({});
+  const [dataModal, setDataModal] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   const resetModal = () => {
     setTypeModal("");
-    setEntityModal({});
+    setDataModal(null);
     setShowModal(false);
   };
 
   return (
     <ModalContext.Provider
       value={{
-        showModal,
-        setShowModal,
         typeModal,
         setTypeModal,
-        entityModal,
-        setEntityModal,
+        dataModal,
+        setDataModal,
+        showModal,
+        setShowModal,
         resetModal,
       }}
     >
