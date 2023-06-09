@@ -1,5 +1,5 @@
 import { useEffect, useContext, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { toast } from "react-toastify";
 
@@ -32,15 +32,7 @@ export const Clientes = () => {
 
   console.log(clientes);
 
-  const {
-    showModal,
-    setShowModal,
-    typeModal,
-    setTypeModal,
-    dataModal,
-    setDataModal,
-    resetModal,
-  } = useContext(ModalContext);
+  const { showModal, setShowModal } = useContext(ModalContext);
 
   const schema = yup.object().shape({
     name: yup.string().required("Nome é obrigatório!"),
@@ -52,7 +44,7 @@ export const Clientes = () => {
     handleSubmit,
     reset,
     formState,
-    formState: { errors, isSubmitSuccessful },
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -62,13 +54,14 @@ export const Clientes = () => {
       const { data } = await api.get("/clientes");
       setClientes(data);
     } catch (err) {
-      toast.error(err.response.data.message);
+      // toast.error(err.response.data.message);
+      console.log(err);
     }
   };
 
   useEffect(() => {
     getClientes();
-  }, [clientes]);
+  }, []);
 
   useEffect(() => {
     if (formState.isSubmitSuccessful) {

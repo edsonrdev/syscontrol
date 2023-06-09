@@ -288,11 +288,12 @@ export const Container = styled.div`
     cursor: pointer;
     outline: none;
     user-select: none;
+    /* border: 1px solid; */
   }
 
   .toggle-shadow + label {
     padding: 2px;
-    width: 388px; // 388 / 2 = 194
+    /* width: 3px; // 388 / 2 = 194 */
     height: 47px;
     /* background-color: #dddddd; */
     border-radius: 4px;
@@ -302,10 +303,11 @@ export const Container = styled.div`
   .toggle-shadow + label:after {
     display: block;
     position: absolute;
-    top: 1px;
-    left: 1px;
-    bottom: 1px;
+    top: 0;
+    left: 0;
+    bottom: 0;
     content: "";
+    /* height: 45px; */
   }
   .toggle-shadow + label:after {
     content: "Parcela";

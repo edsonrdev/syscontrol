@@ -22,15 +22,19 @@ export const Cliente = () => {
   const [input, setInput] = useState(0);
   const emprestimoRef = useRef(0);
   const parcelaRef = useRef(0);
-
+  const { parcelas, setParcelas } = useContext(ParcelasContext);
   const {
     dataModal,
+    setDataModal,
     showModal,
     setShowModal,
     typeModal,
     setTypeModal,
-    setDataModal,
+    resetModal,
   } = useContext(ModalContext);
+  const currentLoan = cliente?.loans?.find((loan) => loan.current);
+
+  console.log(currentLoan);
 
   useEffect(() => {
     api
@@ -39,10 +43,23 @@ export const Cliente = () => {
         setCliente(resp.data);
       })
       .catch((err) => console.log(err));
-    // console.log(cliente.loans[0]?.portion);
   }, [id]);
 
-  const { parcelas, setParcelas } = useContext(ParcelasContext);
+  useEffect(() => {
+    if (!checkbox) {
+      if (currentLoan?.length) {
+        setDataModal(currentLoan?.portion);
+      }
+    } else {
+      setDataModal("");
+    }
+  }, [checkbox, currentLoan?.length, currentLoan?.portion, setDataModal]);
+
+  useEffect(() => {
+    if (showModal === false) {
+      setCheckbox(false);
+    }
+  }, [showModal]);
 
   // simulação e contratação de empréstimos
   const handleShowSimulationModal = () => {
@@ -111,21 +128,23 @@ export const Cliente = () => {
     setDataModal(value);
     setTypeModal("to-pay-modal");
     setShowModal(true);
-    // console.log(checkbox);
   };
 
-  useEffect(() => {
-    // console.log(checkbox);
-    if (!checkbox) {
-      setInput(dataModal);
-      console.log("checkbox desmarcado - parcela");
-    } else {
-      setDataModal("");
-      console.log("checkbox marcado - outro valor");
-    }
-  }, [checkbox]);
+  const handleToPay = () => {
+    const data = {
+      loanId: currentLoan.id,
+      amount: +dataModal,
+    };
 
-  // console.log(checkbox);
+    // console.log(data);
+
+    api
+      .put("/emprestimos", data)
+      .then((resp) => console.log(resp))
+      .catch((err) => console.log(err));
+
+    // resetModal();
+  };
 
   return (
     <Container>
@@ -146,56 +165,58 @@ export const Cliente = () => {
           <hr />
 
           {!cliente?.loans?.length ? (
-            <p>O cliente não possui empréstimos no momento.</p>
+            <p>Esse cliente ainda não contraiu empréstimo.</p>
           ) : (
             <table className="cliente-loan">
               <thead>
                 <tr>
-                  <th>Nº da parcela</th>
+                  <th>Parcelas</th>
                   <th>Vencimento</th>
-                  <th>Valor da parcela</th>
-                  <th>Valor pago</th>
                   <th>Status</th>
+                  <th>Valor pago</th>
                   <th>Valor após pagar</th>
                   <th>Opções</th>
                 </tr>
               </thead>
 
               <tbody>
-                {cliente.loans[0]?.movements.map((m, index) => (
-                  <tr key={m.id} className={m.status === 3 ? "expired" : ""}>
+                {currentLoan?.parcels.map((p, index) => (
+                  <tr key={p.id} className={p.status === 3 ? "expired" : ""}>
                     <td>Parcela {index + 1}</td>
-                    <td>{convertDate(m.expireDate)}</td>
-                    <td>{cliente.loans[0].portion.toFixed(2)}</td>
-                    <td>{m.paidValue === 0 ? "---" : m.paidValue}</td>
+                    <td>{convertDate(p.expireDate)}</td>
+
                     <td>
                       <span
                         className={
-                          m.status === 0
+                          p.status === 0
                             ? "open"
-                            : m.status === 1
+                            : p.status === 1
                             ? "fullPaid"
-                            : m.status === 2
+                            : p.status === 2
                             ? "partialPaid"
                             : "expired"
                         }
                       >
-                        {m.status === 0
+                        {p.status === 0
                           ? "Em aberto"
-                          : m.status === 1
+                          : p.status === 1
                           ? "Pago total"
-                          : m.status === 2
+                          : p.status === 2
                           ? "Pago parcialmente"
                           : "Em atraso"}
                       </span>
                     </td>
                     <td>
-                      {m.previousValue.toFixed(2)} + 10% -{" "}
-                      {cliente.loans[0].portion} = {m.remainderValue.toFixed(2)}
+                      {p.paidValue === 0 ? "---" : p.paidValue.toFixed(2)}
+                    </td>
+                    <td>
+                      {p.previousValue.toFixed(2)} + 10% -{" "}
+                      {p.paidValue ? p.paidValue : currentLoan.portion} ={" "}
+                      {p.remainderValue.toFixed(2)}
                     </td>
                     <td className="options">
-                      {m.current ? (
-                        m.status === 1 || m.status === 2 ? (
+                      {p.current ? (
+                        p.status === 1 || p.status === 2 ? (
                           <span>---</span>
                         ) : (
                           <>
@@ -207,7 +228,7 @@ export const Cliente = () => {
                             >
                               Pagar
                             </button>
-                            {m.status !== 3 && (
+                            {p.status !== 3 && (
                               <>
                                 OU <button className="output">Pegar</button>
                               </>
@@ -334,12 +355,17 @@ export const Cliente = () => {
               step="0.01"
               id="payment-amount"
               value={dataModal}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => setDataModal(e.target.value)}
               disabled={!checkbox}
             />
           </div>
           <div className="form-group">
-            <Button variant="primary" size="md" className="btn-to-pay">
+            <Button
+              variant="primary"
+              size="md"
+              className="btn-to-pay"
+              onClick={handleToPay}
+            >
               Pagar
             </Button>
           </div>
