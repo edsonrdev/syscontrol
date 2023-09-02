@@ -4,6 +4,7 @@ import { Link, useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import schema from "./schema";
+import * as yup from "yup";
 
 import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";

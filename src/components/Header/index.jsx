@@ -6,7 +6,7 @@ import { Button } from "../../components/Button";
 
 import { Container } from "./styles";
 
-export const Header = ({ page = "" }) => {
+export const Header = ({ page }) => {
   const history = useHistory();
   const [logged] = useState(false);
 
@@ -28,13 +28,13 @@ export const Header = ({ page = "" }) => {
                 Entrar
               </Button>
 
-              <Button
+              {/* <Button
                 size="lg"
                 variant="outline"
                 onClick={(e) => history.push("/cadastrar")}
               >
                 Criar
-              </Button>
+              </Button> */}
             </div>
           </>
         ) : (

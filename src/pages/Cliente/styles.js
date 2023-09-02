@@ -9,7 +9,6 @@ export const Container = styled.div`
 
     .search-form {
       display: flex;
-      /* background: red; */
       height: 45px;
 
       input {
@@ -49,8 +48,10 @@ export const Container = styled.div`
   table.cliente-loan {
     width: 100%;
     border-spacing: 0;
-    /* border: 1px solid var(--gray-2); */
+    background: var(--white);
     border-top: 0;
+    margin-bottom: 20px;
+    margin-top: 16px;
 
     thead {
       background: var(--brand-3);
@@ -81,7 +82,8 @@ export const Container = styled.div`
         }
 
         td {
-          padding: 10px;
+          min-height: 42px;
+          padding: 0 8px;
           font-size: 13px;
           border-bottom: 1px solid var(--gray-2);
           border-right: 1px solid var(--gray-2);
@@ -96,14 +98,15 @@ export const Container = styled.div`
             align-items: center;
           }
 
-          &:not(.options) span {
+          span {
             font-size: 13.5px;
-            font-weight: 600;
+            font-weight: 400;
             &.open {
               color: var(--gray-4);
             }
             &.fullPaid {
-              color: var(--brand-3);
+              /* font-weight: 600; */
+              color: var(--brand-4);
             }
             &.partialPaid {
               color: var(--blue-3);
@@ -114,6 +117,7 @@ export const Container = styled.div`
           }
 
           &.options {
+            color: var(--gray-3);
             /* span {
               font-weight: 600;
               display: flex;
@@ -143,6 +147,11 @@ export const Container = styled.div`
           }
         }
 
+        &.no-current-input {
+          cursor: not-allowed;
+          opacity: 0.2;
+        }
+
         &.output {
           background: var(--red-3);
           border-color: var(--red-4);
@@ -151,6 +160,92 @@ export const Container = styled.div`
             background: var(--red-4);
           }
         }
+      }
+    }
+  }
+
+  h2.paid-loans-title {
+    color: var(--gray-4);
+    font-weight: 400;
+    font-size: 18px;
+    border-bottom: 1.5px solid var(--gray-2);
+    padding: 5px 0;
+    margin-bottom: 10px;
+  }
+
+  table.paid-loans {
+    background: var(--white);
+    width: 100%;
+    border-spacing: 0;
+    margin-top: 16px;
+
+    th {
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      text-align: left;
+      padding: 9px 8px;
+      border-top: 1px solid var(--brand-4);
+      border-bottom: 1px solid var(--brand-4);
+      border-right: 1px solid var(--brand-4);
+
+      &:first-of-type {
+        border-left: 1.5px solid var(--brand-4);
+      }
+
+      background: var(--brand-3);
+
+      color: var(--white);
+    }
+
+    td {
+      font-size: 13px;
+      padding: 6px 8px;
+      /* border-top: 1px solid var(--gray-2); */
+      border-bottom: 1px solid var(--gray-2);
+      border-right: 1px solid var(--gray-2);
+      color: var(--gray-4);
+
+      &:first-of-type {
+        border-left: 1px solid var(--gray-2);
+      }
+      &:last-of-type {
+        border-right: 1px solid var(--gray-2);
+      }
+    }
+
+    button {
+      padding: 4px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      background: #55affa;
+      border-radius: 3px;
+      border: 0;
+      color: var(--white);
+      letter-spacing: 0.2px;
+      transition: background 0.25s ease-in-out;
+      cursor: pointer;
+
+      /* svg {
+        color: var(--white);
+        padding: 3px;
+        font-size: 16px;
+        width: 18px;
+        height: 18px;
+        background: #3188f3;
+        border-radius: 50%;
+
+        transition: background 0.25s ease-in-out;
+      } */
+
+      &:hover {
+        background: #3188f3;
+        /* 
+        svg {
+          background: #55affa;
+        } */
       }
     }
   }

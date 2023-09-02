@@ -12,6 +12,7 @@ export const Container = styled.button`
   align-items: center;
   justify-content: center;
   gap: 6px;
+  letter-spacing: 0.2px;
 
   font-size: ${({ size }) =>
     size === "sm"

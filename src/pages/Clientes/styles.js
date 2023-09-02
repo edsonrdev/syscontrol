@@ -35,7 +35,8 @@ export const Container = styled.div`
       justify-content: space-between;
       background: var(--white);
       font-size: 14px;
-      transition: background 0.1s ease-in-out;
+      opacity: 0.8;
+      transition: background 0.1s ease-in-out, opacity 0.1s ease-in-out;
 
       &:not(:first-of-type) {
         border-top: 0;
@@ -43,6 +44,8 @@ export const Container = styled.div`
 
       &:hover {
         background: var(--gray-1);
+        cursor: pointer;
+        opacity: 1;
       }
 
       &.client-header {
@@ -57,14 +60,14 @@ export const Container = styled.div`
       }
 
       .options {
-        display: inline-flex;
-        align-items: stretch;
-        gap: 16px;
-        padding: 5px 0 0 0;
+        /* display: flex;
+        align-items: center;
+        gap: 16px; */
 
         color: var(--gray-2);
+        /* background: blue; */
 
-        svg {
+        /* svg {
           width: 20px;
           height: 18px;
           cursor: pointer;
@@ -85,21 +88,21 @@ export const Container = styled.div`
               color: var(--brand-4);
             }
           }
-        }
+        } */
       }
     }
 
     p {
-      font-size: 18px;
-      /* font-weight: 500; */
-      margin-top: 32px;
+      font-size: 16px;
+      font-weight: 300;
       padding-bottom: 10px;
       color: var(--gray-4);
       border-bottom: 1px dashed var(--gray-3);
 
       span.cliente-pesquisado {
-        color: var(--brand-3);
-        font-weight: 600;
+        color: var(--brand-4);
+        font-weight: 500;
+        letter-spacing: 0.2px;
       }
     }
   }

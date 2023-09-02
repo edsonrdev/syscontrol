@@ -1,21 +1,5 @@
-// const loanSimulation = () => {
-//   let v = +total,
-//     p = +portion,
-//     r = 0;
-//   let rowCalc = "";
-//   let loanArr = [];
-
-//   while (v >= p) {
-//     r = v + v * 0.1 - p;
-//     rowCalc = `${v.toFixed(2)} + 10% - ${p.toFixed(2)} = ${r.toFixed(2)}`;
-//     loanArr.push(rowCalc);
-//     v = r;
-//   }
-
-//   // setLoan([]);
-
-//   setLoan([...loanArr]);
-// };
+import currency from "currency.js";
+import { format } from "date-fns";
 
 export const convertDate = (date) => {
   const newDate = new Date(date);
@@ -30,3 +14,11 @@ export const convertDate = (date) => {
 
   return `${d}/${m}/${y}`;
 };
+
+export const convertToRealBR = (value) =>
+  currency(value, {
+    separator: ".",
+    decimal: ",",
+    precision: 2,
+    pattern: `R$ #`,
+  });

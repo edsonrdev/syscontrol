@@ -23,14 +23,14 @@ import { api } from "../../services";
 export const Clientes = () => {
   const history = useHistory();
 
-  const [clientes, setClientes] = useState([]);
-  const [pesquisa, setPesquisa] = useState("");
+  const [clientes, setClientes] = useState([]); // state da chamada à API
+  const [pesquisa, setPesquisa] = useState(""); // state do input de pesquisa
 
   const clientesPesquisados = clientes.filter((client) =>
     client.name.toLowerCase().includes(pesquisa.toLowerCase())
   );
 
-  console.log(clientes);
+  // console.log(clientes);
 
   const { showModal, setShowModal } = useContext(ModalContext);
 
@@ -54,7 +54,7 @@ export const Clientes = () => {
       const { data } = await api.get("/clientes");
       setClientes(data);
     } catch (err) {
-      // toast.error(err.response.data.message);
+      toast.error(err.response);
       console.log(err);
     }
   };
@@ -72,6 +72,7 @@ export const Clientes = () => {
   const submitCallback = async (data) => {
     try {
       await api.post("/clientes", data);
+      setClientes([...clientes, data].toReversed());
       toast.success("Cliente cadastrado com sucesso!");
     } catch (err) {
       toast.error(err.response.data.message);
@@ -86,7 +87,10 @@ export const Clientes = () => {
 
       <main>
         <div className="container">
-          <h1 className="page-title">Lista de Clientes</h1>
+          <h1 className="page-title">Listagem de Clientes</h1>
+
+          <hr />
+
           <div className="search-client-section">
             <div className="search-form">
               <input
@@ -105,81 +109,63 @@ export const Clientes = () => {
 
           <ul className="client-list">
             <Tooltip
-              anchorSelect=".view-details"
+              anchorSelect=".edit-client"
               place="left"
               style={{
                 backgroundColor: "var(--brand-3)",
                 fontWeight: 600,
               }}
             />
-            <Tooltip
-              anchorSelect=".edit-client"
-              style={{
-                backgroundColor: "var(--brand-3)",
-                fontWeight: 600,
-              }}
-            />
-
-            {/* {clientes.length ? (
-              <li className="client-header">
-                <span>Cliente</span>
-                <span>Opções</span>
-              </li>
-            ) : (
-              ""
-            )} */}
 
             {!clientes.length ? (
               <p>Sem clientes cadastrados.</p>
-            ) : clientes.length && !pesquisa ? (
+            ) : // ) : clientes.length && !pesquisa ? (
+            !pesquisa ? (
               clientes.map((cliente) => (
-                <li key={cliente.id}>
+                <li
+                  key={cliente.id}
+                  onClick={() => history.push(`/cliente/${cliente.id}`)}
+                >
                   <span className="client-name">{cliente.name}</span>
                   <div className="options">
-                    <HiEye
-                      className="view-details"
-                      data-tooltip-content="Acessar cliente"
-                      onClick={() => history.push(`/cliente/${cliente.id}`)}
-                    />
-
-                    <span className="divider">|</span>
-
-                    <RiEdit2Fill
-                      className="edit-client"
-                      data-tooltip-content="Editar cliente"
-                      onClick={() =>
-                        history.push(`/cliente/editar/${cliente.id}`)
-                      }
-                    />
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        history.push(`/cliente/editar/${cliente.id}`);
+                      }}
+                    >
+                      Editar
+                    </Button>
                   </div>
                 </li>
               ))
-            ) : clientesPesquisados.length && pesquisa ? (
+            ) : // ) : clientesPesquisados.length && pesquisa ? (
+            clientesPesquisados.length ? (
               clientesPesquisados.map((cliente) => (
-                <li key={cliente.id}>
+                <li
+                  key={cliente.id}
+                  onClick={() => history.push(`/cliente/${cliente.id}`)}
+                >
                   <span className="client-name">{cliente.name}</span>
                   <div className="options">
-                    <HiEye
-                      className="view-details"
-                      data-tooltip-content="Ver detalhes"
-                      onClick={() => history.push(`/cliente/${cliente.id}`)}
-                    />
-
-                    <span className="divider">|</span>
-
-                    <RiEdit2Fill
-                      className="edit-client"
-                      data-tooltip-content="Editar cliente"
-                      onClick={() =>
-                        history.push(`/cliente/editar/${cliente.id}`)
-                      }
-                    />
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        history.push(`/cliente/editar/${cliente.id}`);
+                      }}
+                    >
+                      Editar
+                    </Button>
                   </div>
                 </li>
               ))
             ) : (
               <p>
-                Sem resultados para esta busca:{" "}
+                Sem resultados para:{" "}
                 <span className="cliente-pesquisado">{pesquisa}</span>
               </p>
             )}

@@ -20,6 +20,7 @@ export const GlobalStyles = createGlobalStyle`
         --transparent: transparent;
 
         --gray-1: #f4f4f4;
+        /* --gray-1b: #f2f2f2; */
         --gray-2: #d3d3d3;
         --gray-3: #aeaeae;
         --gray-4: #808080;

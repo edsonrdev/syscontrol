@@ -1,6 +1,9 @@
 import { useState, useEffect, useContext, useRef } from "react";
 import { useParams } from "react-router-dom";
 
+import { format } from "date-fns";
+import { convertToRealBR } from "../../utils/helpers";
+
 import { Container } from "./styles";
 import { api } from "../../services";
 
@@ -32,18 +35,23 @@ export const Cliente = () => {
     setTypeModal,
     resetModal,
   } = useContext(ModalContext);
-  const currentLoan = cliente?.loans?.find((loan) => loan.current);
-
-  console.log(currentLoan);
-
-  useEffect(() => {
+  const [successfullyPaidParcel, setSuccessfullyPaidParcel] = useState(false);
+  const currentLoan = cliente?.loans?.find((loan) => loan.isCurrent);
+  // const loans = cliente?.loans;
+  const getClients = () => {
     api
       .get(`/clientes/${id}`)
       .then((resp) => {
         setCliente(resp.data);
       })
       .catch((err) => console.log(err));
-  }, [id]);
+  };
+
+  useEffect(() => {
+    getClients();
+  }, [id, successfullyPaidParcel]);
+
+  // useEffect(() => {}, [successfullyPaidParcel]);
 
   useEffect(() => {
     if (!checkbox) {
@@ -66,6 +74,7 @@ export const Cliente = () => {
     setTypeModal("simulation-modal");
     setShowModal(true);
   };
+
   const handleLoanSimulation = () => {
     let valorEmprestimo = +document.querySelector("#emprestimo").value;
     let valorParcela = +document.querySelector("#parcela").value;
@@ -101,6 +110,7 @@ export const Cliente = () => {
     document.querySelector("#emprestimo").value = "";
     document.querySelector("#parcela").value = "";
   };
+
   const handleHireLoan = () => {
     const dadosEmprestimo = {
       clientId: id,
@@ -124,27 +134,45 @@ export const Cliente = () => {
   };
 
   // pagamento de empréstimos
-  const handleShowPayModal = (value) => {
-    setDataModal(value);
-    setTypeModal("to-pay-modal");
-    setShowModal(true);
-  };
+  // const handleShowPayModal = (value) => {
+  //   // setDataModal(value);
+  //   // setTypeModal("to-pay-modal");
+  //   // setShowModal(true);
 
-  const handleToPay = () => {
+  // };
+
+  const handleToPay = (p) => {
+    const lastParcel = currentLoan?.parcels[currentLoan?.parcels.length - 1];
+
+    const isLastParcel =
+      p === currentLoan?.parcels[currentLoan?.parcels.length - 1];
+
     const data = {
       loanId: currentLoan.id,
-      amount: +dataModal,
+      amount: !isLastParcel
+        ? +currentLoan?.portion
+        : +(lastParcel.previousValue * 1.1).toFixed(2),
     };
-
-    // console.log(data);
 
     api
       .put("/emprestimos", data)
-      .then((resp) => console.log(resp))
-      .catch((err) => console.log(err));
-
-    // resetModal();
+      .then((resp) => {
+        setSuccessfullyPaidParcel(true);
+        toast.success("Parcela paga com sucesso!");
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error(err.response.data.message);
+      });
   };
+
+  // console.log(
+  //   +(
+  //     currentLoan?.parcels[currentLoan?.parcels.length - 1].previousValue * 1.1
+  //   ).toFixed(2)
+  // );
+
+  console.log(cliente);
 
   return (
     <Container>
@@ -155,7 +183,8 @@ export const Cliente = () => {
           <div className="search-client-section">
             <h1 className="page-title">Cliente: {cliente.name}</h1>
 
-            {!cliente.loans?.length && (
+            {(!cliente?.loans?.length ||
+              cliente?.loans?.every((loan) => loan.finished)) && (
               <Button variant="primary" onClick={handleShowSimulationModal}>
                 Simular Empréstimo
               </Button>
@@ -165,84 +194,142 @@ export const Cliente = () => {
           <hr />
 
           {!cliente?.loans?.length ? (
-            <p>Esse cliente ainda não contraiu empréstimo.</p>
+            <p>Esse cliente ainda não tem empréstimos.</p>
           ) : (
-            <table className="cliente-loan">
-              <thead>
-                <tr>
-                  <th>Parcelas</th>
-                  <th>Vencimento</th>
-                  <th>Status</th>
-                  <th>Valor pago</th>
-                  <th>Valor após pagar</th>
-                  <th>Opções</th>
-                </tr>
-              </thead>
+            <>
+              {!cliente?.loans?.every((loan) => loan.finished) ? (
+                <>
+                  <h2 className="paid-loans-title">Empréstimo Corrente</h2>
 
-              <tbody>
-                {currentLoan?.parcels.map((p, index) => (
-                  <tr key={p.id} className={p.status === 3 ? "expired" : ""}>
-                    <td>Parcela {index + 1}</td>
-                    <td>{convertDate(p.expireDate)}</td>
+                  <table className="cliente-loan">
+                    <thead>
+                      <tr>
+                        <th>Parcelas</th>
+                        <th>Vencimento</th>
+                        <th>Dívida Atual</th>
+                        <th>Cálculo da Dívida Restante</th>
+                        <th>Valor Pago</th>
+                        <th>Opções</th>
+                      </tr>
+                    </thead>
 
-                    <td>
-                      <span
-                        className={
-                          p.status === 0
-                            ? "open"
-                            : p.status === 1
-                            ? "fullPaid"
-                            : p.status === 2
-                            ? "partialPaid"
-                            : "expired"
-                        }
-                      >
-                        {p.status === 0
-                          ? "Em aberto"
-                          : p.status === 1
-                          ? "Pago total"
-                          : p.status === 2
-                          ? "Pago parcialmente"
-                          : "Em atraso"}
-                      </span>
-                    </td>
-                    <td>
-                      {p.paidValue === 0 ? "---" : p.paidValue.toFixed(2)}
-                    </td>
-                    <td>
-                      {p.previousValue.toFixed(2)} + 10% -{" "}
-                      {p.paidValue ? p.paidValue : currentLoan.portion} ={" "}
-                      {p.remainderValue.toFixed(2)}
-                    </td>
-                    <td className="options">
-                      {p.current ? (
-                        p.status === 1 || p.status === 2 ? (
-                          <span>---</span>
-                        ) : (
-                          <>
+                    <tbody>
+                      {currentLoan?.parcels.map((p, index) => (
+                        <tr
+                          key={p.id}
+                          className={p.status === 3 ? "expired" : ""}
+                        >
+                          <td>
+                            {index !== currentLoan?.parcels?.length - 1
+                              ? index + 1
+                              : "Resto"}
+                          </td>
+                          <td>{convertDate(p.expireDate)}</td>
+
+                          <td>
+                            {convertToRealBR(p.previousValue * 1.1).format()}
+                          </td>
+
+                          <td>
+                            {index !== currentLoan?.parcels?.length - 1
+                              ? `${convertToRealBR(
+                                  p.previousValue
+                                ).format()} + ${convertToRealBR(
+                                  p.previousValue * 0.1
+                                ).format()} - ${convertToRealBR(
+                                  currentLoan.portion
+                                ).format()} = ${convertToRealBR(
+                                  p.remainderValue
+                                ).format()}`
+                              : `${convertToRealBR(
+                                  p.previousValue
+                                ).format()} + ${convertToRealBR(
+                                  p.previousValue * 0.1
+                                ).format()} - ${convertToRealBR(
+                                  p.previousValue * 1.1
+                                ).format()} = ${convertToRealBR(0).format()}`}
+                          </td>
+                          {/* <td>
+                            {index !== currentLoan?.parcels?.length - 1
+                              ? convertToRealBR(p.remainderValue).format()
+                              : convertToRealBR(0).format()}
+                          </td> */}
+                          <td>
+                            <span
+                              className={`${p.paidValue !== 0 && "fullPaid"}`}
+                            >
+                              {p.paidValue !== 0
+                                ? convertToRealBR(p.paidValue).format()
+                                : ". . ."}
+                            </span>
+                          </td>
+                          <td className="options">
                             <button
-                              className="input"
-                              onClick={() =>
-                                handleShowPayModal(cliente?.loans[0]?.portion)
-                              }
+                              className={`input ${
+                                !p.isCurrent && "no-current-input"
+                              }`}
+                              onClick={() => handleToPay(p)}
+                              disabled={!p.isCurrent}
                             >
                               Pagar
                             </button>
-                            {p.status !== 3 && (
-                              <>
-                                OU <button className="output">Pegar</button>
-                              </>
-                            )}
-                          </>
-                        )
-                      ) : (
-                        <span>---</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
+              ) : (
+                ""
+              )}
+
+              {cliente?.loans?.some((loan) => loan.finished) && (
+                <>
+                  <h2 className="paid-loans-title">Empréstimos Pagos</h2>
+
+                  <table className="paid-loans">
+                    <thead>
+                      <tr>
+                        <th>Início</th>
+                        <th>Parcela (R$)</th>
+                        <th>Emprestado (R$)</th>
+                        <th>Recebido (com Juros)</th>
+                        <th>Fim</th>
+                        <th>Opções</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cliente?.loans
+                        ?.filter((loan) => loan.finished)
+                        .toReversed()
+                        .map((loan) => (
+                          <tr key={loan.id}>
+                            <td>
+                              {format(new Date(loan.createdAt), "dd/LL/yyyy")}
+                            </td>
+                            <td>{convertToRealBR(loan.portion).format()}</td>
+                            <td>{convertToRealBR(loan.value).format()}</td>
+                            <td>
+                              {convertToRealBR(
+                                loan.portion * (loan.parcels?.length - 1) +
+                                  loan.parcels[loan.parcels?.length - 1]
+                                    .paidValue
+                              ).format()}
+                            </td>
+
+                            <td>
+                              {format(new Date(loan.updatedAt), "dd/LL/yyyy")}
+                            </td>
+                            <td>
+                              <button>Consultar</button>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </>
+              )}
+            </>
           )}
         </div>
       </main>
@@ -374,3 +461,7 @@ export const Cliente = () => {
     </Container>
   );
 };
+
+// 56894
+// 56489
+// 7569312
